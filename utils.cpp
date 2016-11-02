@@ -86,7 +86,7 @@ bool millerRabin(mpz_class p)
 
         x = getRandomInt(p);
         mpz_gcd(resultOfGCD.get_mpz_t(),x.get_mpz_t(),p.get_mpz_t());
-        cout << "result of gcd" << resultOfGCD << endl;
+       // cout << "result of gcd" << resultOfGCD << endl;
         if(resultOfGCD.get_ui() != 1)//вмещается (так как gcd не будет больше UL)
 	{
 		 cout<<"p isn't prime" << endl;
