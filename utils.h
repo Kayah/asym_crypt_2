@@ -3,6 +3,6 @@
 #include <gmpxx.h>
 unsigned long long getRandomPrimeNumber(char*(*bbs)());
 char * bbs();
-mpz_class millerRabin(mpz_class p);
+bool millerRabin(mpz_class p);
 mpz_class getRandomInt(mpz_class p);
 #endif
