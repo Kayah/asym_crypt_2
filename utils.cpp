@@ -7,24 +7,21 @@
 #include <iostream>
 #include <stdio.h>
 #include "calc.h"
-/***size of array***/
-#define N  32
+
+#define N  32 //Size of array of bytes
 
 using std::endl;
 using std::cout;
 using std::string;
-typedef char *(*BbsPF)();
+typedef unsigned char *(*BbsPF)();
 const BbsPF pf = bbs;
 
 int main ()
 {
-  string a;
-	a = fromDecToHex(255,16);  
-cout<< a << endl;
 	mpz_class p("340282366920938463463374607431768211456");
     
   //  cout<< millerRabin(p)<<endl; 
-  //  getRandomPrimeNumber(pf);
+    getRandomPrimeNumber(pf);
     return 0;
 } 
 
@@ -135,35 +132,46 @@ bool millerRabin(mpz_class p)
     return true;
 }
 
-unsigned long long getRandomPrimeNumber(char*(*pf)())
+unsigned long long getRandomPrimeNumber(unsigned char*(*pf)())
 {
-    char *arrOfBits = pf();
-    int p = 0; 
-    return p;
-}
-
-char * bbs()
-{
-    char *out_put = new char[N];
-    mpz_class r;
-    r = pow(5,56);
-    mpz_class p("0xD5BBB96D30086EC484EBA3D7F9CAEB07");
-    mpz_class q("0x425D2B9BFDB25B9CF6C416CC6E37B59C1F");
-    mpz_class n = p*q;
-    mpz_class x;
-    mpz_class two("2");
-    for(int i = 0; i < N; i++)
-    {
-        mpz_powm(r.get_mpz_t(),r.get_mpz_t(),two.get_mpz_t(),n.get_mpz_t());
-        mpz_mod(x.get_mpz_t(),r.get_mpz_t(),two.get_mpz_t());
-        //cout<<x.get_ui()<<endl;
-        out_put[i] = x.get_ui();
-       // cout << (int)out_put[i];
+    unsigned char *arrOfBits = pf();
+    string hexStr;
+    for (int i = 0; i < N; i++)
+    {	
+	hexStr.append(fromDecToHex(arrOfBits[i],16));
     }
-    //return x.get_ui();
-    return out_put;
+    cout << hexStr << endl;
+    mpz_class arg(hexStr,16);   
+    //mpz_set_str(arg,hexStr,16);
+   // mpz_class p = getRandomInt(arg);
+    cout << arg <<endl;
+
+    
+
+   
+    return 0;
 }
 
-
-	
+unsigned char* bbs()
+{
+  unsigned char* out_put = new unsigned char[N];
+  mpz_class p("0xD5BBB96D30086EC484EBA3D7F9CAEB07");
+  mpz_class q("0x425D2B9BFDB25B9CF6C416CC6E37B59C1F");
+  mpz_class n = p*q;
+  mpz_class x;
+  mpz_class two("2"); 
+  mpz_class b("256");
+  mpz_class r;
+  r = pow(5,56);
+  
+  for(int i = 0; i < N; i++)
+  {
+    mpz_powm(r.get_mpz_t(),r.get_mpz_t(),two.get_mpz_t(),n.get_mpz_t());
+    //x = r.get_ui()%b.get_ui();
+    mpz_mod(x.get_mpz_t(),r.get_mpz_t(),b.get_mpz_t());
+   // cout << x.get_ui() << endl;
+    out_put[i] = x.get_ui();
+  }
+  return out_put;
+}
 #endif

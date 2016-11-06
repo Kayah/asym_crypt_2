@@ -11,11 +11,11 @@ string fromDecToHex(int number, const unsigned int &base)
 {
     const char *DIGITS = "0123456789abcdefghijklmnopqrstuvwxyz";
     bool FlagInverse = false;
-    std::string reversString, stringInBase;
+    string reversString, stringInBase;
 
     if (base < 2 || base > 36)
     {
-        std::cout << "Error: base must be from 2 to 36." << std::endl;
+        cout << "Error: base must be from 2 to 36." << endl;
         return "-1";
     }
     if (number < 0)
