@@ -6,23 +6,25 @@
 #include "utils.h"
 #include <iostream>
 #include <stdio.h>
-
+#include "calc.h"
 /***size of array***/
-#define N  20
+#define N  32
 
 using std::endl;
 using std::cout;
-
+using std::string;
 typedef char *(*BbsPF)();
 const BbsPF pf = bbs;
 
 int main ()
 {
-    mpz_class p("340282366920938463463374607431768211456");
-    //p /= 2;
-//    cout << p.get_mpz_t() << endl;
-   cout<< millerRabin(p)<<endl; 
-   // getRandomPrimeNumber(pf);
+  string a;
+	a = fromDecToHex(255,16);  
+cout<< a << endl;
+	mpz_class p("340282366920938463463374607431768211456");
+    
+  //  cout<< millerRabin(p)<<endl; 
+  //  getRandomPrimeNumber(pf);
     return 0;
 } 
 
@@ -95,9 +97,9 @@ bool millerRabin(mpz_class p)
         //step 2.1            
         
         mpz_powm(powmResult.get_mpz_t(),x.get_mpz_t(),powVal.get_mpz_t(),p.get_mpz_t());
-        if(mpz_cmp(powmResult.get_mpz_t(),one.get_mpz_t()) || mpz_cmp(powmResult.get_mpz_t(),minusOne.get_mpz_t()))
+        if((mpz_cmp(powmResult.get_mpz_t(),one.get_mpz_t())==0) || (mpz_cmp(powmResult.get_mpz_t(),minusOne.get_mpz_t())==0))
         {
-	//	cout <<" continue" << endl;
+		//cout <<" continue" << endl;
 		continue;
             //?????    
         }
@@ -110,10 +112,12 @@ bool millerRabin(mpz_class p)
 		mpz_powm(xR.get_mpz_t(),x.get_mpz_t(),powVal.get_mpz_t(),p.get_mpz_t());
 		
 		if(xR==minusOne)
+		//if(mpz_cmp(xR.get_mpz_t(),minusOne.get_mpz_t())==0)
 		{
 			continue;
 		}
 		else if(xR==one)
+		//else if(mpz_cmp(xR.get_mpz_t(),one.get_mpz_t())==0)
 		{
 			cout << "Xr == one " << endl;
 			return false;
@@ -134,7 +138,7 @@ bool millerRabin(mpz_class p)
 unsigned long long getRandomPrimeNumber(char*(*pf)())
 {
     char *arrOfBits = pf();
-    unsigned long long p = 0;
+    int p = 0; 
     return p;
 }
 
