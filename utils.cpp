@@ -18,17 +18,17 @@ const BbsPF pf = bbs;
 
 int main ()
 {
-	mpz_class p("340282366920938463463374607431768211456");
-    
-  //  cout<< millerRabin(p)<<endl; 
-    getRandomPrimeNumber(pf);
+    mpz_class p("340282366920938463463374607431768211456");
+    //cout<< millerRabin(p)<<endl; 
+    mpz_class out = getRandomPrimeNumber(pf);
+    cout << out << endl;
     return 0;
 } 
 
-mpz_class getRandomInt(mpz_class p)
-{
+mpz_class getRandomInt(mpz_class p)  
+{   
     mpz_class x("0"),
-              randomGen(p.get_mpz_t());
+    randomGen(p.get_mpz_t());
     gmp_randstate_t state;
     gmp_randinit_mt(state);
     unsigned long seed;
@@ -132,7 +132,7 @@ bool millerRabin(mpz_class p)
     return true;
 }
 
-unsigned long long getRandomPrimeNumber(unsigned char*(*pf)())
+mpz_class getRandomPrimeNumber(unsigned char*(*pf)())
 {
     unsigned char *arrOfBits = pf();
     string hexStr;
@@ -140,16 +140,17 @@ unsigned long long getRandomPrimeNumber(unsigned char*(*pf)())
     {	
 	hexStr.append(fromDecToHex(arrOfBits[i],16));
     }
-    cout << hexStr << endl;
     mpz_class arg(hexStr,16);   
-    //mpz_set_str(arg,hexStr,16);
-   // mpz_class p = getRandomInt(arg);
-    cout << arg <<endl;
+    mpz_class p = getRandomInt(arg);
+    bool isSimple = false;
 
-    
-
+    while (!isSimple)
+    {
+      ///????????????????????????<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+	isSimple = millerRabin(p);	
+    }   
    
-    return 0;
+    return p;
 }
 
 unsigned char* bbs()
