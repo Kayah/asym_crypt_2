@@ -15,15 +15,27 @@ using std::cout;
 using std::string;
 typedef unsigned char *(*BbsPF)();
 const BbsPF pf = bbs;
-
+bool testSimple(mpz_class);
+bool even(mpz_class);
 int main ()
 {
     mpz_class p("340282366920938463463374607431768211456");
-    //cout<< millerRabin(p)<<endl; 
-    mpz_class out = getRandomPrimeNumber(pf);
-    cout << out << endl;
+    mpz_class g("1135628817109367756995192706943908321032057986268200345015255110234801");
+    mpz_class a("999983");
+   // cout << testSimple(p)<<endl;
+   
+    // cout<< millerRabin(g)<<endl; 
+    //mpz_class out = getRandomInt(p);
+    //mpz_class out = getRandomPrimeNumber(pf);
+    //cout << out << endl;
     return 0;
-} 
+}
+
+bool even(mpz_class p)
+{
+    return mpz_even_p(p.get_mpz_t());
+    
+}
 
 mpz_class getRandomInt(mpz_class p)  
 {   
@@ -35,11 +47,86 @@ mpz_class getRandomInt(mpz_class p)
     gmp_randseed_ui(state, seed);   
     mpz_urandomm(x.get_mpz_t(),state,randomGen.get_mpz_t());      
 
-    if(x == 0) x += 2;
-    if(x == 1) x += 1;
-  
+    //if(x == 0) x += 2;
+    //if(x == 1) x += 1;
+    // верхнюю границу муменьшить на 2
+     // тогда без ифов + 2
+ 
     return x; 
 }
+
+bool testSimple(mpz_class p)
+{
+    mpz_class d("0");
+    mpz_class s("0");
+    mpz_class tmpP = p-1;
+    mpz_class two("2");
+    mpz_class x("0"); 
+    mpz_class GCD("0");
+    mpz_class XD("0");
+    mpz_class tmpPower("0");
+    mpz_class XR("0");
+    mpz_class one("1"); 
+    
+    while(even(tmpP))
+    {
+        ++s;
+        tmpP >>=1;
+    }
+    
+    d = tmpP;
+
+    for(int k = 0; k < 1000; k++)
+    {
+        x = getRandomInt(p);
+        mpz_gcd(GCD.get_mpz_t(),x.get_mpz_t(),p.get_mpz_t());
+    
+        if(GCD.get_ui() !=1 )
+        {
+            return false;    
+        }
+
+     
+        mpz_powm(XD.get_mpz_t(),x.get_mpz_t(),d.get_mpz_t(),p.get_mpz_t());
+        
+        if((XD==1)|| (XD==tmpP))
+        {
+            continue;
+            //return true;
+        }
+        
+        for(int r = 1; r < s; r++)
+        {
+		    mpz_pow_ui(tmpPower.get_mpz_t(),two.get_mpz_t(),r);
+            d *= tmpPower;	        	  	
+		    mpz_powm(XR.get_mpz_t(),x.get_mpz_t(),d.get_mpz_t(),p.get_mpz_t());
+            
+            if( XR - p == -1)
+            {
+                XR = -1;
+            }
+            
+            if( XR == -1)
+            {
+               continue; 
+                //return true;
+            }
+            if(XR == 1)
+            {
+                return false;
+            }
+            
+            if( r == (s-1))
+            {
+                return false;
+            }
+            
+        }       
+    }
+        
+    return true;
+}
+/*
 bool millerRabin(mpz_class p)
 {
     mpz_class pMinusOne(p.get_mpz_t()-1),
@@ -61,7 +148,7 @@ bool millerRabin(mpz_class p)
     //tmp p - minus one mod
     mpz_class result("1");
     mpz_mod(result.get_mpz_t(),tmpPMinusOne.get_mpz_t(),two.get_mpz_t());
-    cout << result<<endl;
+   // cout << result<<endl;
     //cout << tmpPMinusOne.get_ui(); не помещается
     mpz_mod(result.get_mpz_t(),tmpPMinusOne.get_mpz_t(),two.get_mpz_t());
    // while(tmpPMinusOne.get_ui()%two.get_ui() == 0) не помещается  
@@ -75,7 +162,7 @@ bool millerRabin(mpz_class p)
     }
     
     d = tmpPMinusOne;
-   // cout << s <<" "<< d << endl;
+    //cout << s <<" "<< d << endl;
     powVal = d;
 
    
@@ -86,28 +173,32 @@ bool millerRabin(mpz_class p)
         x = getRandomInt(p);
         mpz_gcd(resultOfGCD.get_mpz_t(),x.get_mpz_t(),p.get_mpz_t());
        // cout << "result of gcd" << resultOfGCD << endl;
-        if(resultOfGCD.get_ui() != 1)//вмещается (так как gcd не будет больше UL)
-	{
+        if(resultOfGCD != 1)//вмещается (так как gcd не будет больше UL)
+	    {
 		 cout<<"p isn't prime" << endl;
 		 return false;
         }
         //step 2.1            
         
         mpz_powm(powmResult.get_mpz_t(),x.get_mpz_t(),powVal.get_mpz_t(),p.get_mpz_t());
-        if((mpz_cmp(powmResult.get_mpz_t(),one.get_mpz_t())==0) || (mpz_cmp(powmResult.get_mpz_t(),minusOne.get_mpz_t())==0))
+        if((powmResult==one) || (powmResult==minusOne))//mimusone на pminusone
         {
 		//cout <<" continue" << endl;
-		continue;
+		    continue;
             //?????    
         }
 	//step 2.2
 	//cout <<"tmpPower" <<tmpPower << endl;
         for(int r = 1; r <= s-1; r++)
         {
+        powVal = d;
 		mpz_pow_ui(tmpPower.get_mpz_t(),two.get_mpz_t(),r);	        	  	
-		powVal *= tmpPower;
+		powVal = powVal * tmpPower;
 		mpz_powm(xR.get_mpz_t(),x.get_mpz_t(),powVal.get_mpz_t(),p.get_mpz_t());
-		
+		if((xR - p) == minusOne)
+		{
+			xR = minusOne;
+		}
 		if(xR==minusOne)
 		//if(mpz_cmp(xR.get_mpz_t(),minusOne.get_mpz_t())==0)
 		{
@@ -121,7 +212,7 @@ bool millerRabin(mpz_class p)
 		}
 	//step 2.3
 	
-		if( r == (s-1))
+		if( r == (s-1)) //r == s !!!!!!!!!!<<<<<<<<<<<<<<<<<<,
 		{
 			cout << "r == s-1" <<endl;
 			return false;
@@ -130,7 +221,7 @@ bool millerRabin(mpz_class p)
     } 
     
     return true;
-}
+}*/
 
 mpz_class getRandomPrimeNumber(unsigned char*(*pf)())
 {
@@ -139,16 +230,34 @@ mpz_class getRandomPrimeNumber(unsigned char*(*pf)())
     for (int i = 0; i < N; i++)
     {	
 	hexStr.append(fromDecToHex(arrOfBits[i],16));
+	  
     }
     mpz_class arg(hexStr,16);   
-    mpz_class p = getRandomInt(arg);
+    mpz_class p("0");
+    mpz_class two("2");
+    mpz_class pModByTwo("0");
+    mpz_class tmp("0");
     bool isSimple = false;
-
-    while (!isSimple)
+    //cout << arg << endl;
+    p = getRandomInt(arg);
+    isSimple = millerRabin(p);
+    cout << isSimple << endl;
+   /* while (!isSimple)
     {
       ///????????????????????????<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-	isSimple = millerRabin(p);	
-    }   
+	 p = p + 2;
+	 cout << p << endl;
+	// if (p == simple)
+	// 2p+1 ? simple 
+	isSimple = millerRabin(p);
+	if(isSimple)
+        {
+   	    tmp = 2*p+1;
+            isSimple = millerRabin(tmp);
+            if(isSimple)
+		return p;	    
+	}	
+    }*/   
    
     return p;
 }
