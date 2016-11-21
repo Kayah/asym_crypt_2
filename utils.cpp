@@ -100,6 +100,11 @@ bool millerRabin(mpz_class p)
     {
         x = getRandomInt(p_1);
 
+        while (mpz_cmp_ui(x.get_mpz_t(),0) == 0 || mpz_cmp_ui(x.get_mpz_t(),1) == 0)
+        {
+            x = getRandomInt(p_1);
+        }
+
         mpz_gcd(GCD.get_mpz_t(),x.get_mpz_t(),p.get_mpz_t());
 
         if(GCD != one)
