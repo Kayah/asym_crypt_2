@@ -9,7 +9,7 @@
 #include "calc.h"
 #include <time.h>
 #include <limits.h>
-
+#include "rsa.h"
 #define N  32 //Size of array of bytes
 
 using std::endl;
@@ -17,17 +17,12 @@ using std::cout;
 using std::string;
 typedef unsigned char *(*BbsPF)();
 const BbsPF pf = bbs;
-int main ()
+/*int main ()
 {
-    mpz_class g ("123453241");
-    //cout << testSimple(g)<<endl;
-    //cout<< millerRabin(g)<<endl;
-    //cout <<  getRandomInt( g) << endl;
     cout << getRandomPrimeNumber(pf)<<endl;
-    //cout << millerRabin(g) << endl;
     return 0;
 }
-
+*/
 bool even(mpz_class p)
 {
     return mpz_even_p(p.get_mpz_t());
@@ -100,10 +95,10 @@ bool millerRabin(mpz_class p)
     {
         x = getRandomInt(p_1);
 
-        while (mpz_cmp_ui(x.get_mpz_t(),0) == 0 || mpz_cmp_ui(x.get_mpz_t(),1) == 0)
+        /*while (mpz_cmp_ui(x.get_mpz_t(),0) == 0 || mpz_cmp_ui(x.get_mpz_t(),1) == 0)
         {
             x = getRandomInt(p_1);
-        }
+        }*/
 
         mpz_gcd(GCD.get_mpz_t(),x.get_mpz_t(),p.get_mpz_t());
 
